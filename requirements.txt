@@ -1,0 +1,11 @@
+ultralytics>=8.2.0
+roboflow>=1.1.25
+numpy==1.26.4
+opencv-python
+matplotlib
+pillow
+pyyaml
+tqdm
+requests
+torch
+torchvision

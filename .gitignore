@@ -1,0 +1,9 @@
+__pycache__/
+.venv/
+BALLS/
+runs/
+yolo8n.pt
+.DS_Store
+.idea/
+.vscode/
+BALLS.zip
