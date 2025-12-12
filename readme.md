@@ -107,3 +107,56 @@ print(f"Using device: {device}")
 - Для тренування YOLOv8 можна використовувати `yolov8n.pt` як pretrained модель або `yolov8n.yaml` для тренування з нуля.
 - На Mac Intel модель тренуватиметься на CPU.
 
+
+
+## 6.Квантизація
+
+Hailo підтримує:
+
+- PTQ (post-training quantization)
+
+- QAT (quantization aware training)
+
+- Найпростіший варіант — PTQ у Hailo Model Zoo:
+
+```
+hailomz quantize \
+    --ckpt model.onnx \
+    --calib-dataset <path to images> \
+    --output model_quantized.onnx
+```
+
+## 7.Компіляція у HEF (Hailo Executable File)
+
+HEF — це файл, який виконується на Hailo-8.
+
+
+```
+hailo_compiler \
+    model_quantized.onnx \
+    --hw-arch hailo8 \
+    --output-file model.hef
+```
+
+## 8.Запуск inference на Hailo-8
+
+Python runtime:
+
+```
+from hailo_platform import HEF, VDevice, HailoStream
+
+hef = HEF("model.hef")
+vdev = VDevice()
+network_groups = hef.configure(vdev)
+input_stream = network_groups.input_streams[0]
+output_stream = network_groups.output_streams[0]
+
+with HailoStream(input_stream, output_stream) as stream:
+    result = stream.infer(my_input_np_array)
+    print(result)
+```
+
+CLI:
+```
+hailortcli run --hef model.hef --input my_input.npy
+```
